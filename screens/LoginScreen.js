@@ -29,7 +29,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   const main={
-    businessLogo:require('../assets/vra_2.png'),
+    businessLogo:require('../assets/admission-logo.png'),
 
   };
   return (
@@ -39,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
           borderRadius: 80,
           overflow: 'hidden',
           marginBottom: 16,alignSelf: 'center'}}/>
-      <Text style={styles.label}>Enter Parent Phone Number</Text>
+      <Text style={styles.label}>Enter Guardian Phone Number</Text>
       <TextInput
         style={styles.input}
         keyboardType="phone-pad"
@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }) => {
         onChangeText={setPhone}
       />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Fetch Students</Text>
+        <Text style={styles.buttonText}>View Students</Text>
       </TouchableOpacity>
     </View>
   );
