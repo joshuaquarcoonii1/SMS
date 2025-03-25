@@ -31,10 +31,11 @@ const BillsScreen = ({ route, navigation }) => {
           setTerms(data.term.term);
           setItems(
             data.term.map((item) => ({
-              label: item.term,
+              label: `${item.term} (${item.term_date})`,
               value: item.term_date
             }))
           );
+          
         }
       } catch (error) {
         console.error('Error fetching terms:', error);
@@ -107,6 +108,13 @@ const BillsScreen = ({ route, navigation }) => {
           </View>
         )}
         // ListEmptyComponent={!loading && <Text>No bills found</Text>}
+        ListEmptyComponent={
+  !loading && selectedTerm && (
+    <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
+      No bills found.
+    </Text>
+  )
+}
         contentContainerStyle={styles.list}
       />
     </SafeAreaView>

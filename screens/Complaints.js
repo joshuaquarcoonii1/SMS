@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -12,15 +12,23 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
-const ComplaintScreen = () => {
+const ComplaintScreen = ({ students }) => {
   const [phone, setPhone] = useState('');
   const [complaint, setComplaint] = useState('');
   const [loading, setLoading] = useState(false);
+  const route = useRoute();
+
+  useEffect(() => {
+    if (students && students.length > 0) {
+      setPhone(students[0].guardian_phone); // Set the phone state to the guardian_phone from the first student
+    }
+  }, [students]);
 
   const submitComplaint = async () => {
     if (!phone || !complaint) {
-      Alert.alert('Missing Info', 'Please fill in both fields.');
+      Alert.alert('Missing Info', 'Please fill in the field.');
       return;
     }
 
@@ -56,13 +64,13 @@ const ComplaintScreen = () => {
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>Submit Complaint</Text>
 
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder="Phone Number"
             value={phone}
-            onChangeText={setPhone}
             keyboardType="phone-pad"
-          />
+            editable={false} // Make the input field read-only
+          /> */}
 
           <TextInput
             style={[styles.input, styles.textArea]}
