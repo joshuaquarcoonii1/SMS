@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Button } from 'react-native';
+import {
+  View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Pressable
+} from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
-const StudentListScreen = ({students }) => {
+const StudentListScreen = ({ students }) => {
   const navigation = useNavigation();
   const route = useRoute();
-
 
   useFocusEffect(
     useCallback(() => {
@@ -17,14 +18,17 @@ const StudentListScreen = ({students }) => {
   const firstName = guardianName?.split(' ')[0] || 'Guardian';
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        pressed && { transform: [{ scale: 0.98 }], backgroundColor: '#f0f4ff' }
+      ]}
       onPress={() => navigation.navigate('StudentDetail', { student: item })}
     >
       <Text style={styles.name}>{item.student_name}</Text>
       <Text style={styles.class}>{item.present_class} · {item.student_gender}</Text>
       <Text style={styles.school}>{item.school_name}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const handleLogout = () => {
@@ -37,8 +41,13 @@ const StudentListScreen = ({students }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.welcome}>Welcome, {firstName} 👋</Text>
-        <Button title="Logout" onPress={handleLogout} color="#d9534f" />
+        <View>
+          <Text style={styles.welcome}>Hello, {firstName} 👋</Text>
+          <Text style={styles.subtitle}>Here are your wards</Text>
+        </View>
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </Pressable>
       </View>
 
       <FlatList
@@ -53,24 +62,48 @@ const StudentListScreen = ({students }) => {
 };
 
 export default StudentListScreen;
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f9fc',
+    backgroundColor: '#f5f7fa',
   },
   header: {
     padding: 20,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    backgroundColor: '#007bff',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   welcome: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#e0ecff',
+    marginTop: 4,
+  },
+  logoutButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  logoutText: {
+    color: '#d9534f',
     fontWeight: '600',
-    color: '#333',
   },
   sectionTitle: {
     fontSize: 16,
@@ -78,7 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 10,
     marginHorizontal: 16,
-    color: '#444',
+    color: '#333',
   },
   list: {
     padding: 16,
@@ -86,13 +119,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     padding: 18,
-    borderRadius: 12,
+    borderRadius: 14,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 6,
-    elevation: 3,
+    elevation: 2,
   },
   name: {
     fontSize: 18,
