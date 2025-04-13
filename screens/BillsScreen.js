@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, Button } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, ScrollView ,TouchableOpacity} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+import { Ionicons } from '@expo/vector-icons';
 const BillsScreen = ({ route, navigation }) => {
   const { student } = route.params;
   const [terms, setTerms] = useState([]);
@@ -73,55 +73,142 @@ const BillsScreen = ({ route, navigation }) => {
   const handleBack = () => {
     navigation.goBack();
   };
-
+  const getTotalBill = () => {
+    return bills.reduce((sum, item) => sum + parseFloat(item.bill_amount || 0), 0);
+  };
+  
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={bills}
-        keyExtractor={(item, index) => index.toString()}
-        ListHeaderComponent={
-          <>
-            <Button title="Back" onPress={handleBack} />
-            <Text style={styles.heading}>Select Term</Text>
-            <DropDownPicker
-              open={open}
-              value={selectedTerm}
-              items={items}
-              setOpen={setOpen}
-              setValue={(callback) => {
-                const value = callback(selectedTerm);
-                setSelectedTerm(value);
-                fetchBills(value);
-              }}
-              setItems={setItems}
-              placeholder="Choose a term"
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropdownContainer}
-            />
-            {loading && <ActivityIndicator size="large" color="#4a90e2" style={{ marginTop: 20 }} />}
-          </>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.billItem}>
-            <Text style={styles.billTitle}>{item.payment_for}</Text>
-            <Text style={styles.billAmount}>GHS {item.bill_amount}</Text>
-          </View>
-        )}
-        // ListEmptyComponent={!loading && <Text>No bills found</Text>}
-        ListEmptyComponent={
-  !loading && selectedTerm && (
+    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+      <Ionicons name="arrow-back" size={24} color="#000" />
+      <Text style={styles.backText}>Back</Text>
+    </TouchableOpacity>
+  
+    <Text style={styles.heading}>Select Term</Text>
+  
+    <View style={{ zIndex: 1000, position: 'relative' }}>
+      <View style={styles.dropdownWrapper}>
+      <DropDownPicker
+        open={open}
+        value={selectedTerm}
+        items={items}
+        setOpen={setOpen}
+        setValue={(callback) => {
+          const value = callback(selectedTerm);
+          setSelectedTerm(value);
+          fetchBills(value);
+        }}
+        setItems={setItems}
+        placeholder="Choose a term"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        zIndex={3000}
+        zIndexInverse={1000}
+      />
+      </View>
+    </View>
+  
+    {loading && (
+      <ActivityIndicator size="large" color="#4a90e2" style={{ marginTop: 20 }} />
+    )}
+  
+    <ScrollView contentContainerStyle={styles.tableWrapper}>
+  <View style={styles.tableHeader}>
+    <Text style={[styles.tableCell, styles.headerText]}>ITEM DESCRIPTION</Text>
+    <Text style={[styles.tableCell, styles.headerText, { textAlign: 'right' }]}>AMOUNT</Text>
+  </View>
+
+  {bills.map((item, index) => (
+    <View key={index} style={styles.tableRow}>
+      <Text style={styles.tableCell}>{item.payment_for}</Text>
+      <Text style={[styles.tableCell, { textAlign: 'right' }]}>GHS {parseFloat(item.bill_amount).toFixed(2)}</Text>
+    </View>
+  ))}
+  {bills.length > 0 && (
+  <View style={styles.summarySection}>
+    <View style={styles.summaryRow}>
+      <Text style={styles.summaryLabel}>Total Bill</Text>
+      <Text style={styles.summaryAmount}>GHS {getTotalBill().toFixed(2)}</Text>
+    </View>
+    <View style={styles.summaryRow}>
+      <Text style={styles.summaryLabel}>Credit from last term</Text>
+      <Text style={styles.summaryAmount}>GHS {bills[0].previous_credit?.toFixed(2) || '0.00'}</Text>
+    </View>
+    <View style={styles.summaryRow}>
+      <Text style={styles.summaryLabel}>Arrears from last term</Text>
+      <Text style={styles.summaryAmount}>GHS {bills[0].previous_arrears?.toFixed(2) || '0.00'}</Text>
+    </View>
+    <View style={styles.summaryRow}>
+      <Text style={styles.summaryLabel}>Adjustments</Text>
+      <Text style={styles.summaryAmount}>GHS {bills[0].adjustment?.toFixed(2) || '0.00'}</Text>
+    </View>
+    <View style={[styles.summaryRow, { borderTopWidth: 1, borderTopColor: '#ccc', marginTop: 5 }]}>
+      <Text style={[styles.summaryLabel, { fontWeight: 'bold' }]}>Amount Due</Text>
+      <Text style={[styles.summaryAmount, { fontWeight: 'bold', color: '#d00' }]}>
+        GHS {bills[0].amount_due?.toFixed(2) || '0.00'}
+      </Text>
+    </View>
+  </View>
+)}
+
+
+  {!loading && bills.length === 0 && selectedTerm && (
     <Text style={{ textAlign: 'center', color: '#999', marginTop: 20 }}>
       No bills found.
     </Text>
-  )
-}
-        contentContainerStyle={styles.list}
-      />
-    </SafeAreaView>
+  )}
+</ScrollView>
+
+  </SafeAreaView>
+  
   );
 };
 
 const styles = StyleSheet.create({
+  summarySection: {
+  marginTop: 20,
+  paddingTop: 10,
+},
+summaryRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingVertical: 6,
+},
+summaryLabel: {
+  fontSize: 14,
+  color: '#444',
+},
+summaryAmount: {
+  fontSize: 14,
+  color: '#444',
+},
+
+  tableWrapper: {
+  paddingHorizontal: 20,
+  paddingBottom: 20
+},
+tableHeader: {
+  flexDirection: 'row',
+  borderBottomWidth: 1,
+  borderBottomColor: '#ccc',
+  paddingVertical: 10,
+  marginTop: 10
+},
+tableRow: {
+  flexDirection: 'row',
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: '#f0f0f0',
+},
+tableCell: {
+  flex: 1,
+  fontSize: 14,
+  color: '#333'
+},
+headerText: {
+  fontWeight: '700'
+}
+,
   container: {
     flex: 1,
     backgroundColor: '#f2f2f2'
@@ -129,17 +216,32 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 16
+    marginBottom: 16, marginLeft: 15,
   },
-  dropdown: {
-    marginBottom: 20
-  },
-  dropdownContainer: {
-    zIndex: 1000
-  },
+ dropdownWrapper: {
+  paddingHorizontal: 20, // Matches FlatList content padding
+  zIndex: 1000,
+},
+dropdown: {
+  marginBottom: 20,
+},
+dropdownContainer: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+},
   list: {
     padding: 20,
     flexGrow: 1
+  },  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000',
   },
   billItem: {
     backgroundColor: '#fff',

@@ -70,7 +70,7 @@ const LoginScreen = ({ navigation }) => {
             <Image source={main.businessLogo} style={styles.logo} />
             <Text style={styles.title}>VRA SCHOOLS PARENT APP</Text>
             <Text style={styles.label}>Enter Guardian Phone Number</Text>
-
+  
             <View style={styles.inputWrapper}>
               <Feather name="phone" size={20} color="#555" style={styles.icon} />
               <TextInput
@@ -83,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
                 onChangeText={setPhone}
               />
             </View>
-
+  
             <Animated.View style={{ transform: [{ scale: scaleAnim }], width: '100%' }}>
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -102,6 +102,9 @@ const LoginScreen = ({ navigation }) => {
             </Animated.View>
           </View>
         </ScrollView>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Powered by MIS</Text>
+        </View>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
@@ -128,7 +131,17 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
     alignItems: 'center',
-  },
+  },footer: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: 20,
+  backgroundColor: 'transparent',
+},
+footerText: {
+  fontSize: 14,
+  color: '#888',
+  fontWeight: '500',
+},
   logo: {
     width: 120,
     height: 120,

@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "SMS",
-    "slug": "SMS",
+    "name": "VSPA",
+    "slug": "smsparents",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/newIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/vra_2.png",
+      "image": "./assets/admission-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,12 +17,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/vra_2.png",
+        "foregroundImage": "./assets/admission-logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "fazerager.SMS_parents"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7cfa98dc-69bc-4ca8-84f2-38bb811fbd8a"
+      }
     }
   }
 }
